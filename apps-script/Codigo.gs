@@ -12,14 +12,30 @@
  * doPost: guarda una respuesta nueva
  * doGet:  devuelve las preguntas activas y sus respuestas en JSON
  */
+// Si el script NO se creó desde el Sheet (Extensiones → Apps Script),
+// pega aquí el ID del Sheet: lo que va entre /d/ y /edit en su link.
+const SHEET_ID = '';
 const MAX_LENGTH = 200;
 const PREGUNTAS_INICIALES = [
   '¿Por qué considerar a Bogotá como una capital mundial de la bicicleta?',
   '¿Por qué considerar a Bogotá como una capital mortal de la bicicleta?'
 ];
 
+function ss_() {
+  const ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error('No encuentro el Sheet: pega su ID en SHEET_ID (arriba del código).');
+  return ss;
+}
+
+/** Ejecuta esta función una vez desde el editor para crear las pestañas. */
+function configurar() {
+  const preguntas = leerPreguntas_();
+  respuestasSheet_();
+  Logger.log('Listo. Sheet: ' + ss_().getName() + ' · Preguntas: ' + preguntas.length);
+}
+
 function tab_(nombre, encabezados, alCrear) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = ss_();
   let sheet = ss.getSheetByName(nombre);
   if (!sheet) {
     sheet = ss.insertSheet(nombre);
