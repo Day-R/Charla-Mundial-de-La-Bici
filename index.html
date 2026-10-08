@@ -1,0 +1,539 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Bici - Responde y Vota</title>
+<style>
+  /* Design System - KM0 Despacio Brand */
+  :root {
+    /* Colors - light theme */
+    --bg: #FFFFFF;
+    --fg: #1a1a1a;
+    --accent: #ffd112;
+    --accent-light: #fffaf0;
+    --border: #E5E7EB;
+    --text-muted: #6B7280;
+    --bubble-1: #ffd112;
+    --bubble-2: #7ba4d3;
+    --bubble-3: #7f62e8;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f172a;
+      --fg: #F3F4F6;
+      --accent: #ffd112;
+      --accent-light: #332800;
+      --border: #374151;
+      --text-muted: #9CA3AF;
+      --bubble-1: #ffd112;
+      --bubble-2: #7ba4d3;
+      --bubble-3: #9d84e5;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f172a;
+    --fg: #F3F4F6;
+    --accent: #ffd112;
+    --accent-light: #332800;
+    --border: #374151;
+    --text-muted: #9CA3AF;
+    --bubble-1: #ffd112;
+    --bubble-2: #7ba4d3;
+    --bubble-3: #9d84e5;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-height: 100vh;
+  }
+
+  .header {
+    text-align: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, #7ba4d3 0%, #7f62e8 100%);
+    border-radius: 16px;
+    margin: -16px -16px 0 -16px;
+    padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .logo {
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .logo-km0 {
+    width: 56px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    color: #ffd112;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .header p {
+    color: white;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .bubbles-zone {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-content: flex-start;
+    background: linear-gradient(135deg, rgba(255, 209, 18, 0.08) 0%, rgba(123, 164, 211, 0.08) 100%);
+    border: 2px solid var(--bubble-1);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 300px;
+    justify-content: center;
+  }
+
+  .bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    padding: 8px;
+    cursor: default;
+    transition: all 0.3s ease;
+    word-wrap: break-word;
+    overflow: hidden;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .bubble.size-s { width: 50px; height: 50px; font-size: 11px; }
+  .bubble.size-m { width: 80px; height: 80px; font-size: 12px; }
+  .bubble.size-l { width: 120px; height: 120px; font-size: 13px; font-weight: 700; }
+  .bubble.size-xl { width: 150px; height: 150px; font-size: 14px; font-weight: 700; }
+
+  .bubble.type-1 { background: var(--bubble-1); color: white; }
+  .bubble.type-2 { background: var(--bubble-2); color: white; }
+  .bubble.type-3 { background: var(--bubble-3); color: white; }
+
+  .bubble[data-theme-color] {
+    background: var(--bubble-color);
+    color: white;
+  }
+
+  @keyframes rotateInPlace {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .bubble {
+    animation: rotateInPlace 6s linear infinite;
+  }
+
+  .bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    animation: none;
+  }
+
+  .bubble-count {
+    display: block;
+    font-size: 10px;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+
+  .form-zone {
+    background: var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-zone label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-zone input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .form-zone input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+
+  .form-zone input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  button {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-submit {
+    background: #ffd112;
+    color: #001f3f;
+    flex: 2;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(255, 209, 18, 0.4);
+    background: #ffdb4d;
+  }
+
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+  .btn-clear {
+    background: var(--border);
+    color: var(--fg);
+  }
+
+  .btn-clear:hover {
+    background: var(--text-muted);
+    color: var(--bg);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+  }
+
+  .empty-state p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .stats {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--accent-light);
+  }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 24px; }
+    .bubbles-zone { gap: 8px; padding: 16px; min-height: 250px; }
+    .bubble.size-l { width: 100px; height: 100px; }
+    .bubble.size-xl { width: 120px; height: 120px; }
+    .form-buttons { flex-direction: column; }
+    .btn-submit { flex: 1; }
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <div class="logos">
+      <img src="img/logo-km0.jpg" alt="KM0 · Café, Taller, Punto de encuentro" class="logo logo-km0" />
+      <img src="img/logo-despacio-blanco.png" alt="Despacio" class="logo" />
+    </div>
+    <div class="header-content">
+      <h1>🚴 Capital Mundial de la Bici</h1>
+    </div>
+    <p>¿Por qué Bogotá es la capital mundial de la bici?</p>
+  </div>
+
+  <div class="bubbles-zone" id="bubblesZone">
+    <div class="empty-state">
+      <p>Las respuestas aparecerán aquí</p>
+    </div>
+  </div>
+
+  <div class="form-zone">
+    <label for="respuesta">Tu respuesta</label>
+    <input
+      id="respuesta"
+      type="text"
+      placeholder="Escribe tu perspectiva..."
+      autocomplete="off"
+    />
+    <div class="form-buttons">
+      <button class="btn-submit" onclick="submitResponse()">Enviar ✓</button>
+      <button class="btn-clear" onclick="clearInput()">Limpiar</button>
+    </div>
+    <div class="stats" id="stats">0 respuestas</div>
+  </div>
+</div>
+
+<script>
+  // URL de la Web App de Google Apps Script (ver README.md).
+  // Si está vacía, las respuestas solo se guardan en este navegador.
+  const SHEET_URL = '';
+  const REFRESH_MS = 10000;
+
+  let responses = [];
+  try { responses = JSON.parse(localStorage.getItem('biciBubbles')) || []; } catch (e) {}
+
+  function saveLocal() {
+    try { localStorage.setItem('biciBubbles', JSON.stringify(responses)); } catch (e) {}
+  }
+
+  async function loadFromSheet() {
+    if (!SHEET_URL) return;
+    try {
+      const res = await fetch(SHEET_URL);
+      const data = await res.json();
+      if (Array.isArray(data.respuestas)) {
+        responses = data.respuestas;
+        saveLocal();
+        renderBubbles();
+      }
+    } catch (e) {
+      console.warn('No se pudo leer Google Sheets', e);
+    }
+  }
+
+  async function sendToSheet(text) {
+    if (!SHEET_URL) return;
+    try {
+      // text/plain evita el preflight CORS que Apps Script no soporta
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ respuesta: text })
+      });
+      loadFromSheet();
+    } catch (e) {
+      console.warn('No se pudo enviar a Google Sheets', e);
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  const themeColors = {
+    // Seguridad / Robo
+    'robo': '#d32f2f',
+    'robos': '#d32f2f',
+    'seguridad': '#d32f2f',
+    'ladrón': '#d32f2f',
+    'delito': '#d32f2f',
+    'peligro': '#ff5252',
+    // Ambiente / Contaminación
+    'contaminación': '#388e3c',
+    'aire': '#4caf50',
+    'ambiente': '#388e3c',
+    'verde': '#66bb6a',
+    'árbol': '#2e7d32',
+    'naturaleza': '#4caf50',
+    'ecología': '#388e3c',
+    // Salud / Bienestar
+    'salud': '#00bcd4',
+    'ejercicio': '#00acc1',
+    'deporte': '#00bcd4',
+    'bienestar': '#00bcd4',
+    'vida': '#00e5ff',
+    // Transporte
+    'bici': '#2196f3',
+    'transporte': '#1976d2',
+    'vía': '#2196f3',
+    'carril': '#1976d2',
+    'calle': '#2196f3',
+    // Equidad / Género
+    'mujer': '#c2185b',
+    'género': '#c2185b',
+    'igualdad': '#e91e63',
+    'diversidad': '#ba68c8',
+    // Economía
+    'trabajo': '#ff9800',
+    'empleo': '#f57c00',
+    'dinero': '#fbc02d',
+    'comercio': '#ff9800',
+    // Educación
+    'educación': '#5e35b1',
+    'escuela': '#512da8',
+    'aprendizaje': '#5e35b1',
+    // Espacio público
+    'parque': '#558b2f',
+    'plaza': '#7cb342',
+    'espacio': '#9ccc65'
+  };
+
+  const bubbleColors = ['type-1', 'type-2', 'type-3'];
+
+  function getThemeColor(text) {
+    const words = text.toLowerCase().split(/\s+/);
+    for (let word of words) {
+      const cleanWord = word.replace(/[.,!?;:]/g, '');
+      if (themeColors[cleanWord]) {
+        return themeColors[cleanWord];
+      }
+    }
+    return null;
+  }
+
+  function getKeywords(text) {
+    return text.toLowerCase()
+      .split(/\s+/)
+      .filter(word => word.length > 3)
+      .slice(0, 2);
+  }
+
+  function renderBubbles() {
+    const zone = document.getElementById('bubblesZone');
+
+    if (responses.length === 0) {
+      zone.innerHTML = '<div class="empty-state"><p>Las respuestas aparecerán aquí</p></div>';
+      return;
+    }
+
+    // Count frequency of key phrases
+    const frequency = {};
+    responses.forEach(resp => {
+      const keywords = getKeywords(resp);
+      keywords.forEach(kw => {
+        frequency[kw] = (frequency[kw] || 0) + 1;
+      });
+    });
+
+    // Sort by frequency
+    const sorted = Object.entries(frequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12);
+
+    // Calculate sizes
+    const max = Math.max(...sorted.map(([_, count]) => count));
+
+    zone.innerHTML = sorted.map(([text, count], i) => {
+      const ratio = count / max;
+      let sizeClass = 'size-s';
+      if (ratio > 0.7) sizeClass = 'size-xl';
+      else if (ratio > 0.5) sizeClass = 'size-l';
+      else if (ratio > 0.3) sizeClass = 'size-m';
+
+      const themeColor = getThemeColor(text);
+      let colorClass = bubbleColors[i % 3];
+      let colorStyle = '';
+
+      if (themeColor) {
+        colorStyle = ` style="--bubble-color: ${themeColor};" data-theme-color="${themeColor}"`;
+      }
+
+      return `
+        <div class="bubble ${sizeClass} ${!themeColor ? colorClass : ''}"${colorStyle}>
+          <span>${escapeHtml(text)}<span class="bubble-count">${count}×</span></span>
+        </div>
+      `;
+    }).join('');
+
+    updateStats();
+  }
+
+  function submitResponse() {
+    const input = document.getElementById('respuesta');
+    const text = input.value.trim();
+
+    if (text.length > 0) {
+      responses.push(text);
+      saveLocal();
+      input.value = '';
+      renderBubbles();
+      input.focus();
+      sendToSheet(text);
+    }
+  }
+
+  function clearInput() {
+    document.getElementById('respuesta').value = '';
+  }
+
+  function updateStats() {
+    document.getElementById('stats').textContent =
+      `${responses.length} ${responses.length === 1 ? 'respuesta' : 'respuestas'}`;
+  }
+
+  // Allow Enter key
+  document.getElementById('respuesta').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') submitResponse();
+  });
+
+  // Initial render
+  renderBubbles();
+  updateStats();
+
+  // Sincroniza con Google Sheets para ver las respuestas de todos
+  loadFromSheet();
+  if (SHEET_URL) setInterval(loadFromSheet, REFRESH_MS);
+</script>
+
+</body></html>
