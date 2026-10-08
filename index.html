@@ -529,6 +529,8 @@
   let current = params.get('p') || null;
   let responses = [];      // respuestas de la pregunta actual
   let deSheet = false;     // las preguntas vienen del Google Sheet
+  // No se puede responder hasta saber qué preguntas están activas en el Sheet
+  let cargando = !!SHEET_URL;
 
   try {
     const saved = JSON.parse(localStorage.getItem('biciData'));
@@ -556,15 +558,16 @@
     if (!preguntas.some(p => p.id === current)) current = preguntas[0] && preguntas[0].id;
     const pregunta = preguntas.find(p => p.id === current);
     const h1 = document.getElementById('pregunta');
-    const html = pregunta ? highlight(pregunta.texto) : 'No hay preguntas activas';
+    const html = cargando ? 'Cargando pregunta…'
+      : pregunta ? highlight(pregunta.texto) : 'No hay preguntas activas';
     if (h1.innerHTML !== html) {
       h1.innerHTML = html;
       h1.classList.remove('swap'); void h1.offsetWidth; h1.classList.add('swap');
     }
-    document.getElementById('sendBtn').disabled = !pregunta;
+    document.getElementById('sendBtn').disabled = cargando || !pregunta;
 
     const tabs = document.getElementById('qtabs');
-    tabs.hidden = preguntas.length < 2;
+    tabs.hidden = cargando || preguntas.length < 2;
     tabs.innerHTML = preguntas.map((p, i) =>
       `<button type="button" class="qtab" data-id="${escapeHtml(p.id)}" aria-current="${p.id === current}" title="${escapeHtml(p.texto)}">Pregunta ${i + 1}</button>`
     ).join('');
@@ -624,11 +627,13 @@
       preguntas = data.preguntas;
       allResponses = data.respuestas;
       deSheet = true;
+      cargando = false;
       saveLocal();
       setLive(true);
       renderAll();
     } catch (e) {
       setLive(false);
+      if (cargando) { cargando = false; renderAll(); }
       console.warn('No se pudo leer Google Sheets', e);
     }
   }
@@ -770,7 +775,7 @@
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return input.focus();
-    if (!current) return;
+    if (!current || cargando) return;
     allResponses.push({ p: current, r: text });
     saveLocal();
     input.value = '';
