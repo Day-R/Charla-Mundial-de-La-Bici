@@ -68,6 +68,7 @@
     gap: 16px;
     animation: rise .7s cubic-bezier(.2,.8,.2,1) both;
   }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
   .brands { display: flex; align-items: center; gap: 18px; }
   .brands img { display: block; height: 44px; width: auto; }
   .brands .km0 { width: 44px; border-radius: 10px; box-shadow: 0 0 0 1px var(--line); }
@@ -131,6 +132,7 @@
     font-style: normal;
     color: var(--green);
   }
+  h1 em.mortal, .stage-q em.mortal { color: var(--coral); }
   h1.swap { animation: rise .5s cubic-bezier(.2,.8,.2,1) both; }
 
   /* ---------- Selector de preguntas ---------- */
@@ -365,14 +367,63 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
   /* ---------- Modo proyección ---------- */
-  body.proyectar .ask,
-  body.proyectar .hint { display: none; }
-  body.proyectar .hero { grid-template-columns: 1fr; margin: 32px 0 24px; }
-  body.proyectar h1 { font-size: clamp(40px, 5.2vw, 84px); }
-  body.proyectar .page { max-width: 1400px; }
-  body.proyectar .cloud { min-height: 62vh; }
-  body.proyectar .bubble { width: calc(100px + 130px * var(--s)); height: calc(100px + 130px * var(--s)); }
-  body.proyectar .bubble .word { font-size: calc((16px + 18px * var(--s)) * var(--fit)); }
+  .stage { display: none; }
+  body.proyectar .hero,
+  body.proyectar .lane,
+  body.proyectar .results { display: none; }
+  body.proyectar .page { max-width: none; padding-left: 32px; padding-right: 32px; }
+  body.proyectar .stage {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 24px;
+    margin-top: 24px;
+    height: calc(100vh - 120px);
+  }
+  .stage-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 24px;
+    min-height: 0;
+  }
+  .stage-col { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .stage-q {
+    font-family: var(--display);
+    font-stretch: 112%;
+    font-weight: 900;
+    font-size: clamp(22px, 2.3vw, 40px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .stage-q em { font-style: normal; color: var(--green); }
+  .stage-col .stats { margin-bottom: 12px; }
+  .stage-col .cloud { flex: 1; min-height: 0; }
+  .stage .cloud { --k: 1; gap: calc(14px * var(--k)); }
+  .stage .bubble { width: calc((78px + 120px * var(--s)) * var(--k)); height: calc((78px + 120px * var(--s)) * var(--k)); }
+  .stage .bubble .word { font-size: calc((14px + 16px * var(--s)) * var(--fit) * var(--k)); }
+  .stage .bubble .count { font-size: calc(13px * var(--k)); }
+  .stage-qr {
+    align-self: end;
+    background: var(--yellow);
+    color: var(--night);
+    border-radius: 20px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stage-qr img { display: block; width: 100%; border-radius: 10px; }
+  .stage-qr strong {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--display);
+    font-stretch: 115%;
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+  .stage-qr span { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
 
   /* ---------- Animaciones ---------- */
   @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
@@ -409,14 +460,17 @@
       <span class="sep" aria-hidden="true"></span>
       <img src="img/logo-despacio-blanco.png" alt="Despacio">
     </div>
-    <span class="live" id="live"><span class="dot"></span><span id="liveText">Conectando…</span></span>
+    <div class="top-actions">
+      <button class="ghost proyectar-btn" id="projectBtn" type="button">⛶ Modo proyección</button>
+      <span class="live" id="live"><span class="dot"></span><span id="liveText">Conectando…</span></span>
+    </div>
   </header>
 
   <section class="hero">
     <div>
       <div class="kicker">Capital Mundial de la Bici</div>
       <nav class="qtabs" id="qtabs" aria-label="Preguntas" hidden></nav>
-      <h1 id="pregunta">¿Por qué Bogotá es la capital mundial de la <em>bici</em>?</h1>
+      <h1 id="pregunta">¿Por qué considerar a Bogotá como una capital mundial de la <em>bicicleta</em>?</h1>
     </div>
 
     <form class="ask" id="askForm" autocomplete="off">
@@ -431,7 +485,7 @@
 
   <div class="lane" aria-hidden="true"></div>
 
-  <section>
+  <section class="results">
     <div class="cloud-head">
       <h2>Lo que dice la gente</h2>
       <div class="stats" id="stats"><b>0</b> respuestas</div>
@@ -439,8 +493,16 @@
     <div class="cloud" id="cloud" aria-live="polite"></div>
     <div class="foot">
       <span>Las palabras más repetidas se ven más grandes</span>
-      <button class="ghost proyectar-btn" id="projectBtn" type="button">⛶ Modo proyección</button>
     </div>
+  </section>
+
+  <section class="stage" aria-label="Vista para proyector">
+    <div class="stage-grid" id="stageGrid"></div>
+    <aside class="stage-qr">
+      <img src="img/qr.svg" alt="Código QR para responder">
+      <strong>Escanea y responde</strong>
+      <span>day-r.github.io/Charla-Mundial-de-La-Bici</span>
+    </aside>
   </section>
 </div>
 
@@ -450,22 +512,28 @@
   // URL de la Web App de Google Apps Script (ver README.md).
   // Si está vacía, las respuestas solo se guardan en este navegador.
   const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwuJY6b5P7qdy9yjeB09Yo325flInIhGtLoZDuuHp1nXaEjCiP1DYRU8tWFYonL9eTQdA/exec';
-  const REFRESH_MS = 10000;
+  const params = new URLSearchParams(location.search);
+  // El proyector se actualiza rápido; los celulares, más despacio para no saturar el Sheet
+  const REFRESH_MS = params.has('pantalla') ? 4000 : 15000;
   const MAX_BUBBLES = 18;
 
   // Se usa si no hay conexión con el Sheet. Las preguntas se administran
   // en la pestaña "Preguntas" del Google Sheet.
-  const PREGUNTAS_INICIALES = [{ id: 'P1', texto: '¿Por qué Bogotá es la capital mundial de la bici?' }];
+  const PREGUNTAS_INICIALES = [
+    { id: 'P1', texto: '¿Por qué considerar a Bogotá como una capital mundial de la bicicleta?' },
+    { id: 'P2', texto: '¿Por qué considerar a Bogotá como una capital mortal de la bicicleta?' }
+  ];
 
   let preguntas = PREGUNTAS_INICIALES;
   let allResponses = [];   // [{ p: idPregunta, r: texto }]
-  let current = new URLSearchParams(location.search).get('p') || null;
+  let current = params.get('p') || null;
   let responses = [];      // respuestas de la pregunta actual
+  let deSheet = false;     // las preguntas vienen del Google Sheet
 
   try {
     const saved = JSON.parse(localStorage.getItem('biciData'));
     if (saved) {
-      preguntas = saved.preguntas || preguntas;
+      if (saved.deSheet && saved.preguntas) preguntas = saved.preguntas;
       allResponses = saved.respuestas || [];
     } else {
       // migra las respuestas de la versión anterior
@@ -475,11 +543,13 @@
   } catch (e) {}
 
   function saveLocal() {
-    try { localStorage.setItem('biciData', JSON.stringify({ preguntas, respuestas: allResponses })); } catch (e) {}
+    try { localStorage.setItem('biciData', JSON.stringify({ preguntas, respuestas: allResponses, deSheet })); } catch (e) {}
   }
 
   function highlight(texto) {
-    return escapeHtml(texto).replace(/\b(bicis?|bicicletas?)\b/i, '<em>$1</em>');
+    return escapeHtml(texto)
+      .replace(/\b(bicis?|bicicletas?)\b/i, '<em>$1</em>')
+      .replace(/\b(mortal(es)?)\b/i, '<em class="mortal">$1</em>');
   }
 
   function renderPregunta() {
@@ -515,6 +585,29 @@
   function renderAll() {
     renderPregunta();
     renderBubbles();
+    if (document.body.classList.contains('proyectar')) renderStage();
+  }
+
+  // Proyector: una columna por pregunta activa (o solo ?p=ID si viene en el link)
+  function renderStage() {
+    const grid = document.getElementById('stageGrid');
+    const fixed = params.get('p');
+    const visibles = preguntas.filter(p => !fixed || p.id === fixed);
+    const key = visibles.map(p => p.id + p.texto).join('|');
+    if (grid.dataset.key !== key) {
+      grid.dataset.key = key;
+      grid.innerHTML = visibles.map(p => `
+        <div class="stage-col" data-id="${escapeHtml(p.id)}">
+          <h2 class="stage-q">${highlight(p.texto)}</h2>
+          <div class="stats"></div>
+          <div class="cloud"></div>
+        </div>`).join('');
+    }
+    grid.querySelectorAll('.stage-col').forEach(col => {
+      const list = allResponses.filter(x => x.p === col.dataset.id).map(x => x.r);
+      col.querySelector('.stats').innerHTML = statsHtml(list.length);
+      buildCloud(col.querySelector('.cloud'), list);
+    });
   }
 
   function setLive(on) {
@@ -530,6 +623,7 @@
       if (!Array.isArray(data.preguntas) || !Array.isArray(data.respuestas)) throw new Error('Formato inesperado');
       preguntas = data.preguntas;
       allResponses = data.respuestas;
+      deSheet = true;
       saveLocal();
       setLive(true);
       renderAll();
@@ -571,7 +665,9 @@
     white:  { c: '#ffffff',       ink: 'var(--night)' }
   };
   const THEMES = {
-    coral:  ['robo', 'robos', 'seguridad', 'ladrón', 'ladrones', 'delito', 'peligro', 'inseguridad', 'accidentes'],
+    coral:  ['robo', 'robos', 'seguridad', 'ladrón', 'ladrones', 'delito', 'peligro', 'inseguridad', 'accidentes',
+             'muerte', 'muertes', 'muertos', 'mortal', 'siniestros', 'siniestralidad', 'velocidad', 'carros', 'motos',
+             'buses', 'camiones', 'conductores', 'huecos', 'imprudencia', 'riesgo', 'atropellos'],
     green:  ['contaminación', 'aire', 'ambiente', 'verde', 'árbol', 'árboles', 'naturaleza', 'ecología', 'sostenible', 'planeta', 'clima'],
     sky:    ['salud', 'ejercicio', 'deporte', 'bienestar', 'vida', 'ciclovía', 'domingo', 'domingos'],
     yellow: ['bici', 'bicis', 'bicicleta', 'bicicletas', 'transporte', 'vía', 'vías', 'carril', 'calle', 'calles', 'ciclorruta', 'ciclorrutas', 'cicloruta', 'ciclorutas', 'movilidad'],
@@ -598,14 +694,17 @@
   }
 
   function renderBubbles() {
-    const cloud = document.getElementById('cloud');
     updateStats();
+    buildCloud(document.getElementById('cloud'), responses);
+  }
 
+  function buildCloud(cloud, list) {
     const frequency = {};
-    responses.forEach(r => getKeywords(r).forEach(k => frequency[k] = (frequency[k] || 0) + 1));
+    list.forEach(r => getKeywords(r).forEach(k => frequency[k] = (frequency[k] || 0) + 1));
     const sorted = Object.entries(frequency).sort((a, b) => b[1] - a[1]).slice(0, MAX_BUBBLES);
 
     if (sorted.length === 0) {
+      cloud.dataset.html = '';
       cloud.innerHTML = '<div class="empty"><span class="bike">🚲</span><p>Todavía no hay respuestas. ¡Sé la primera persona en responder!</p></div>';
       return;
     }
@@ -615,7 +714,7 @@
     // Mezcla grandes y pequeñas para que la nube no quede ordenada
     const order = sorted.map((_, i) => i).sort((a, b) => ((a * 7) % sorted.length) - ((b * 7) % sorted.length));
 
-    cloud.innerHTML = order.map((idx, i) => {
+    const html = order.map((idx, i) => {
       const [word, count] = sorted[idx];
       const s = max === min ? 0.5 : (count - min) / (max - min);
       const theme = themeOf[word];
@@ -626,11 +725,32 @@
         <span><span class="word">${escapeHtml(word)}</span><span class="count">${count}×</span></span>
       </div>`;
     }).join('');
+    // Solo redibuja si cambió algo, para no reiniciar las animaciones en cada actualización
+    if (cloud.dataset.html !== html) {
+      cloud.dataset.html = html;
+      cloud.innerHTML = html;
+    }
+    fitCloud(cloud);
+  }
+
+  // En el proyector la nube tiene alto fijo: achica las burbujas hasta que quepan
+  function fitCloud(cloud) {
+    if (!cloud.closest('.stage')) return;
+    let k = 1;
+    cloud.style.setProperty('--k', k);
+    while (cloud.scrollHeight > cloud.clientHeight + 2 && k > 0.4) {
+      k -= 0.05;
+      cloud.style.setProperty('--k', k.toFixed(2));
+    }
+  }
+  addEventListener('resize', () => document.querySelectorAll('.stage .cloud').forEach(fitCloud));
+
+  function statsHtml(n) {
+    return `<b>${n}</b> ${n === 1 ? 'respuesta' : 'respuestas'}`;
   }
 
   function updateStats() {
-    const n = responses.length;
-    document.getElementById('stats').innerHTML = `<b>${n}</b> ${n === 1 ? 'respuesta' : 'respuestas'}`;
+    document.getElementById('stats').innerHTML = statsHtml(responses.length);
   }
 
   let toastTimer;
@@ -664,7 +784,8 @@
   const projectBtn = document.getElementById('projectBtn');
   function setProjection(on) {
     document.body.classList.toggle('proyectar', on);
-    projectBtn.textContent = on ? '✕ Salir de proyección' : '⛶ Modo proyección';
+    projectBtn.textContent = on ? '✕ Salir' : '⛶ Modo proyección';
+    if (on) renderStage();
   }
   projectBtn.addEventListener('click', () => {
     const on = !document.body.classList.contains('proyectar');
@@ -672,7 +793,7 @@
     if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
     if (!on && document.fullscreenElement) document.exitFullscreen();
   });
-  if (new URLSearchParams(location.search).has('pantalla')) setProjection(true);
+  if (params.has('pantalla')) setProjection(true);
 
   renderAll();
   loadFromSheet();

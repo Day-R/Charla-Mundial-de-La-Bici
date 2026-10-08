@@ -13,7 +13,10 @@
  * doGet:  devuelve las preguntas activas y sus respuestas en JSON
  */
 const MAX_LENGTH = 200;
-const PREGUNTA_INICIAL = '¿Por qué Bogotá es la capital mundial de la bici?';
+const PREGUNTAS_INICIALES = [
+  '¿Por qué considerar a Bogotá como una capital mundial de la bicicleta?',
+  '¿Por qué considerar a Bogotá como una capital mortal de la bicicleta?'
+];
 
 function tab_(nombre, encabezados, alCrear) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -30,7 +33,7 @@ function tab_(nombre, encabezados, alCrear) {
 
 function preguntasSheet_() {
   return tab_('Preguntas', ['ID', 'Pregunta', 'Activa'], sheet => {
-    sheet.appendRow(['P1', PREGUNTA_INICIAL, true]);
+    PREGUNTAS_INICIALES.forEach((texto, i) => sheet.appendRow(['P' + (i + 1), texto, true]));
     sheet.getRange('C2:C200').insertCheckboxes();
     sheet.setColumnWidth(2, 480);
   });
